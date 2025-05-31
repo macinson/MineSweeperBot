@@ -1,3 +1,6 @@
+import os
+import threading
+
 import pyautogui
 import time
 import random
@@ -12,19 +15,34 @@ init_x = 990
 init_y = 350
 side_width = 32
 
-lose_pixel = (1108,293)
-lose_color = (111,111,37)
+lose_pixel = (1108, 293)
 
-tile_gray = (188,188,189)
+win_pixel = (1117, 278)
+
+smiley_yellow = (253, 254, 85)
+
+tile_gray = (188, 188, 189)
+
 
 def click_randomly(board):
-    available_tiles = np.argwhere(board==-1)
+    available_tiles = np.argwhere(board == -1)
     tile = random.choice(available_tiles)
     rand_x = init_x + side_width * tile[0]
     rand_y = init_y + side_width * tile[1]
     pyautogui.click(rand_x, rand_y)
 
+def exit():
+    while True:
+        if keyboard.is_pressed('q'):
+            os._exit(0)
+
+
 def main():
+    # escape thread
+    # esc = threading.Thread(target=exit)
+    # esc.daemon = True
+    # esc.start()
+
     pyautogui.FAILSAFE = True
     pyautogui.PAUSE = 0
     # pull up the window
@@ -33,8 +51,10 @@ def main():
     board = np.full((game_w, game_h), -1)
     start_time = time.time()
 
-    while not keyboard.is_pressed('q') and time.time() < start_time + 240:
-        if pyautogui.pixel(lose_pixel[0], lose_pixel[1]) == lose_color:
+    while not keyboard.is_pressed('q') and time.time() < start_time + 600:
+        if pyautogui.pixel(win_pixel[0], win_pixel[1]) != smiley_yellow:
+            break
+        if pyautogui.pixel(lose_pixel[0], lose_pixel[1]) != smiley_yellow:
             pyautogui.click(lose_pixel[0], lose_pixel[1])
             board = np.full((game_w, game_h), -1)
         click_randomly(board)
