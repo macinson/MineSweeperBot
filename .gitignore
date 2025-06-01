@@ -245,3 +245,6 @@ fabric.properties
 
 # PyPI configuration file
 .pypirc
+
+# project-specific
+docs/
